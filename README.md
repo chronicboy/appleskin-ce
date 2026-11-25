@@ -33,7 +33,7 @@ showExhaustion=true
 ```
 
 ## Compatibility
-Client-side. Works in singleplayer and on servers (the exhaustion line only appears in singleplayer). Requires Better Than Wolves CE.
+Client-side. Works in singleplayer and on servers (the exhaustion bar only appears in singleplayer). Requires Better Than Wolves CE.
 
 ## Credits
 Inspired by [AppleSkin](https://github.com/squeek502/AppleSkin) by squeek502. AppleSkin CE is a separate implementation written for BTW's hunger and fat system.
