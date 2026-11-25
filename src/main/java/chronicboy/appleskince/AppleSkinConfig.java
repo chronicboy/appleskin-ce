@@ -14,11 +14,13 @@ public final class AppleSkinConfig {
 
 	/** Shank and fat icon rows in food tooltips, like AppleSkin. */
 	public static boolean showTooltips = true;
+	/** Warn about effects eating can give, like raw meat's chance of Hunger. */
+	public static boolean showTooltipEffects = true;
 	/** Extra text lines: exact numbers and what eating it right now would do. */
 	public static boolean showTooltipNumbers = false;
 	/** Flash the shanks and fat that held food would add. */
 	public static boolean showHudPreview = true;
-	/** Hatched exhaustion bar behind the hunger bar (singleplayer only). */
+	/** Hatched exhaustion bar behind the hunger bar, like AppleSkin (singleplayer only). */
 	public static boolean showExhaustion = true;
 
 	private AppleSkinConfig() {
@@ -34,6 +36,7 @@ public final class AppleSkinConfig {
 			}
 		}
 		showTooltips = read(p, "showTooltips", showTooltips);
+		showTooltipEffects = read(p, "showTooltipEffects", showTooltipEffects);
 		showTooltipNumbers = read(p, "showTooltipNumbers", showTooltipNumbers);
 		showHudPreview = read(p, "showHudPreview", showHudPreview);
 		showExhaustion = read(p, "showExhaustion", showExhaustion);
@@ -48,6 +51,7 @@ public final class AppleSkinConfig {
 	public static void save() {
 		Properties p = new Properties();
 		p.setProperty("showTooltips", Boolean.toString(showTooltips));
+		p.setProperty("showTooltipEffects", Boolean.toString(showTooltipEffects));
 		p.setProperty("showTooltipNumbers", Boolean.toString(showTooltipNumbers));
 		p.setProperty("showHudPreview", Boolean.toString(showHudPreview));
 		p.setProperty("showExhaustion", Boolean.toString(showExhaustion));

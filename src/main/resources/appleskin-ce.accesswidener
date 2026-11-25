@@ -2,6 +2,10 @@ accessWidener	v1	named
 
 # Food values that are private in vanilla/BTW
 accessible	field	net/minecraft/src/ItemFood	alwaysEdible	Z
+accessible	field	net/minecraft/src/ItemFood	potionId	I
+accessible	field	net/minecraft/src/ItemFood	potionDuration	I
+accessible	field	net/minecraft/src/ItemFood	potionAmplifier	I
+accessible	field	net/minecraft/src/ItemFood	potionEffectProbability	F
 accessible	field	btw/item/items/BucketItemDrinkable	hungerHealed	I
 accessible	field	btw/item/items/BucketItemDrinkable	saturationModifier	F
 

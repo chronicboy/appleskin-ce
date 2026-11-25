@@ -32,6 +32,24 @@ public class GuiIngameMixin {
 	@Unique
 	private static int appleskin$failures = 0;
 
+	/** Hatched exhaustion bar, drawn before BTW's shanks so it sits behind them like AppleSkin's. */
+	@Inject(method = "drawFoodOverlay(II)V", at = @At("HEAD"))
+	private void appleskin$beforeFoodBar(int screenX, int screenY, CallbackInfo ci) {
+		if (!AppleSkinConfig.showExhaustion || appleskin$failures >= 5 || mc.thePlayer == null) return;
+		boolean blend = GL11.glIsEnabled(GL11.GL_BLEND);
+		try {
+			float progress = appleskin$exhaustionProgress();
+			if (progress > 0F) FoodIcons.drawExhaustionHatch(screenX, screenY, progress);
+		} catch (Throwable t) {
+			appleskin$failures++;
+		} finally {
+			GL11.glColor4f(1F, 1F, 1F, 1F);
+			if (blend) GL11.glEnable(GL11.GL_BLEND);
+			else GL11.glDisable(GL11.GL_BLEND);
+			mc.getTextureManager().bindTexture(Gui.icons);
+		}
+	}
+
 	@Inject(method = "drawFoodOverlay(II)V", at = @At("RETURN"))
 	private void appleskin$afterFoodBar(int screenX, int screenY, CallbackInfo ci) {
 		if (appleskin$failures >= 5 || mc.thePlayer == null) return;
@@ -39,11 +57,6 @@ public class GuiIngameMixin {
 		try {
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			// Hatching over the bar, growing from the right as exhaustion builds (singleplayer only).
-			if (AppleSkinConfig.showExhaustion) {
-				float progress = appleskin$exhaustionProgress();
-				if (progress > 0F) FoodIcons.drawExhaustionHatch(screenX, screenY, progress);
-			}
 			if (AppleSkinConfig.showHudPreview) appleskin$drawPreview(screenX, screenY);
 			appleskin$failures = 0;
 		} catch (Throwable t) {

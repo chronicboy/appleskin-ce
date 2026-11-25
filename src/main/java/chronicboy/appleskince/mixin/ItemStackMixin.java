@@ -7,6 +7,7 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Minecraft;
 import net.minecraft.src.Potion;
+import net.minecraft.src.StatCollector;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,7 +24,7 @@ public class ItemStackMixin {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Inject(method = "getTooltip", at = @At("RETURN"))
 	private void appleskin$addFoodLines(EntityPlayer player, boolean advanced, CallbackInfoReturnable<List> cir) {
-		if (!AppleSkinConfig.showTooltips && !AppleSkinConfig.showTooltipNumbers) return;
+		if (!AppleSkinConfig.showTooltips && !AppleSkinConfig.showTooltipNumbers && !AppleSkinConfig.showTooltipEffects) return;
 		List lines = cir.getReturnValue();
 		if (lines == null) return;
 		try {
@@ -37,6 +38,11 @@ public class ItemStackMixin {
 				}
 			}
 
+			if (AppleSkinConfig.showTooltipEffects && info.effectId > 0) {
+				String effect = appleskin$effectLine(info);
+				if (effect != null) lines.add(effect);
+			}
+
 			if (AppleSkinConfig.showTooltipNumbers) {
 				lines.add("§7Hunger: §6" + FoodInfo.format(info.hunger / (float) FoodInfo.UNITS_PER_SHANK)
 						+ " §7Fat from overflow: §e" + Math.round(info.fatMultiplier * 100F) + "%");
@@ -47,6 +53,23 @@ public class ItemStackMixin {
 		} catch (Throwable t) {
 			// Never break a tooltip over our extra lines.
 		}
+	}
+
+	/** e.g. "Hunger (30% chance, 0:30)" in red, or "Regeneration (0:05)" in blue for good effects. */
+	private static String appleskin$effectLine(FoodInfo info) {
+		Potion potion = info.effectId < Potion.potionTypes.length ? Potion.potionTypes[info.effectId] : null;
+		if (potion == null) return null;
+		StringBuilder sb = new StringBuilder(potion.isBadEffect() ? "§c" : "§9");
+		sb.append(StatCollector.translateToLocal(potion.getName()));
+		if (info.effectAmplifier > 0) {
+			sb.append(' ').append(StatCollector.translateToLocal("potion.potency." + info.effectAmplifier));
+		}
+		int seconds = info.effectSeconds;
+		String time = (seconds / 60) + ":" + (seconds % 60 < 10 ? "0" : "") + (seconds % 60);
+		sb.append(" §7(");
+		if (info.effectChance < 1F) sb.append(Math.round(info.effectChance * 100F)).append("% chance, ");
+		sb.append(time).append(')');
+		return sb.toString();
 	}
 
 	/** A line of spaces at least as wide as the icon row. */

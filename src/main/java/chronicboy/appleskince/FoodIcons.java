@@ -131,9 +131,8 @@ public final class FoodIcons {
 	// ---- exhaustion hatching ----
 
 	/**
-	 * Diagonal hatching over the hunger bar, 81 x 9, growing from the right as exhaustion builds.
-	 * Drawn on top because BTW's shank backgrounds cover nearly the whole strip. screenX is the right edge
-	 * BTW passes to drawFoodOverlay.
+	 * Diagonal hatching behind the hunger bar, 81 x 9, growing from the right as exhaustion builds. The shanks
+	 * are drawn over it, so it shows around them. screenX is the right edge BTW passes to drawFoodOverlay.
 	 */
 	public static void drawExhaustionHatch(int screenX, int screenY, float progress) {
 		if (progress <= 0F) return;
@@ -162,7 +161,7 @@ public final class FoodIcons {
 		GL11.glColor4f(1F, 1F, 1F, 1F);
 	}
 
-	/** Light diagonal white stripes with clear gaps and a faint top and bottom edge, so shanks stay readable. */
+	/** Light grey diagonal stripes over a faint fill, with a slightly brighter top and bottom edge. */
 	private static DynamicTexture makeHatch(int w, int h) {
 		DynamicTexture tex = new DynamicTexture(w, h);
 		int[] data = tex.getTextureData();
@@ -170,8 +169,8 @@ public final class FoodIcons {
 			for (int x = 0; x < w; x++) {
 				boolean stripe = ((x + y) & 3) < 2;
 				boolean edge = y == 0 || y == h - 1;
-				int a = edge ? 0x70 : (stripe ? 0x78 : 0x00);
-				data[y * w + x] = (a << 24) | 0xFFFFFF;
+				int a = edge ? 0x90 : (stripe ? 0xA0 : 0x28);
+				data[y * w + x] = (a << 24) | 0xE0E0E0;
 			}
 		}
 		tex.updateDynamicTexture();

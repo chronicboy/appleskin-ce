@@ -28,6 +28,12 @@ public final class FoodInfo {
 	public final boolean isDrink;
 	private final boolean alwaysEdible;
 
+	/** Potion effect eating can give (raw meat's Hunger, spider eye's Poison...): id 0 means none. */
+	public int effectId;
+	public int effectSeconds;
+	public int effectAmplifier;
+	public float effectChance;
+
 	private FoodInfo(int hunger, float fatMultiplier, boolean isDrink, boolean alwaysEdible) {
 		this.hunger = hunger;
 		this.fatMultiplier = fatMultiplier;
@@ -42,7 +48,15 @@ public final class FoodInfo {
 		if (item instanceof ItemFood food) {
 			int units = food.getHungerRestored();
 			if (units <= 0) return null;
-			return new FoodInfo(units, food.getSaturationModifier(), false, food.alwaysEdible);
+			FoodInfo info = new FoodInfo(units, food.getSaturationModifier(), false, food.alwaysEdible);
+			// ItemFood.onFoodEaten applies this on the server with this chance.
+			if (food.potionId > 0 && food.potionEffectProbability > 0F) {
+				info.effectId = food.potionId;
+				info.effectSeconds = food.potionDuration;
+				info.effectAmplifier = food.potionAmplifier;
+				info.effectChance = food.potionEffectProbability;
+			}
+			return info;
 		}
 		if (item instanceof BucketItemDrinkable drink) {
 			if (drink.hungerHealed <= 0) return null;

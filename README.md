@@ -11,19 +11,22 @@ Every food and drinkable bucket shows two rows of icons in its tooltip, in the i
 - **Shanks**: how much hunger it restores.
 - **Fat**: how much fat it gives if all of it overflows a full hunger bar. In BTW, food only turns into fat when your hunger bar is already full.
 
+Foods that can make you sick say so, for example raw meat's chance of the Hunger effect, or Poison from spider eyes, with the chance and how long it lasts.
+
 Turn on `showTooltipNumbers` for exact numbers, plus a line saying what eating it right now would do.
 
 ### Hunger bar preview
 Hold a food and the shanks and fat it would add flash on your hunger bar, so you can see whether you'd waste it.
 
 ### Exhaustion
-Diagonal hatching spreads across the hunger bar from the right as you get closer to losing the next bit of hunger (or fat, when you're burning fat). Exhaustion is never sent to the client, so this works in singleplayer only.
+A hatched bar behind the hunger bar grows from the right as you get closer to losing the next bit of hunger (or fat, when you're burning fat). Exhaustion is never sent to the client, so this works in singleplayer only.
 
 ## Settings
 Each feature can be turned off in `config/appleskin-ce.properties`:
 
 ```
 showTooltips=true
+showTooltipEffects=true
 showTooltipNumbers=false
 showHudPreview=true
 showExhaustion=true
