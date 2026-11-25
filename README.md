@@ -22,7 +22,7 @@ Hold a food and the shanks and fat it would add flash on your hunger bar, so you
 A hatched bar behind the hunger bar grows from the right as you get closer to losing the next bit of hunger (or fat, when you're burning fat). Exhaustion is never sent to the client, so this works in singleplayer only.
 
 ## Settings
-Each feature can be turned off in `config/appleskin-ce.properties`:
+Each feature can be turned off in `config/appleskin-ce.conf`:
 
 ```
 showTooltips=true
