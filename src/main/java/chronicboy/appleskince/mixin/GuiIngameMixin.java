@@ -39,7 +39,7 @@ public class GuiIngameMixin {
 		boolean blend = GL11.glIsEnabled(GL11.GL_BLEND);
 		try {
 			float progress = appleskin$exhaustionProgress();
-			if (progress > 0F) FoodIcons.drawExhaustionHatch(screenX, screenY, progress);
+			if (progress > 0F) FoodIcons.drawExhaustionHatch(screenX, screenY, ((Gui) (Object) this).zLevel, progress);
 		} catch (Throwable t) {
 			appleskin$failures++;
 		} finally {

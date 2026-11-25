@@ -131,10 +131,14 @@ public final class FoodIcons {
 	// ---- exhaustion hatching ----
 
 	/**
-	 * Diagonal hatching behind the hunger bar, 81 x 9, growing from the right as exhaustion builds. The shanks
-	 * are drawn over it, so it shows around them. screenX is the right edge BTW passes to drawFoodOverlay.
+	 * AppleSkin-style exhaustion underlay: an 81 x 9 checker behind the hunger bar, growing from the right as
+	 * exhaustion builds. Drawn before BTW's shanks; it shows in the gaps around them.
+	 *
+	 * @param screenX the right edge BTW passes to drawFoodOverlay (shank 0 spans screenX - 9 .. screenX)
+	 * @param z       GuiIngame's zLevel (-90 while the bars draw). The HUD has depth testing on, so drawing in
+	 *                front of that would stop the shanks drawing where the checker is.
 	 */
-	public static void drawExhaustionHatch(int screenX, int screenY, float progress) {
+	public static void drawExhaustionHatch(int screenX, int screenY, float z, float progress) {
 		if (progress <= 0F) return;
 		int full = 81;
 		int width = Math.round(full * Math.min(1F, progress));
@@ -145,32 +149,34 @@ public final class FoodIcons {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glColor4f(1F, 1F, 1F, 1F);
+		// Never block what's drawn over it.
+		GL11.glDepthMask(false);
 
-		double x1 = screenX - 1;
+		double x1 = screenX;
 		double x0 = x1 - width;
 		double y0 = screenY;
 		double y1 = screenY + ICON;
 		double u0 = (full - width) / (double) full;
 		Tessellator t = Tessellator.instance;
 		t.startDrawingQuads();
-		t.addVertexWithUV(x0, y1, 0, u0, 1);
-		t.addVertexWithUV(x1, y1, 0, 1, 1);
-		t.addVertexWithUV(x1, y0, 0, 1, 0);
-		t.addVertexWithUV(x0, y0, 0, u0, 0);
+		t.addVertexWithUV(x0, y1, z, u0, 1);
+		t.addVertexWithUV(x1, y1, z, 1, 1);
+		t.addVertexWithUV(x1, y0, z, 1, 0);
+		t.addVertexWithUV(x0, y0, z, u0, 0);
 		t.draw();
+
+		GL11.glDepthMask(true);
 		GL11.glColor4f(1F, 1F, 1F, 1F);
 	}
 
-	/** Light grey diagonal stripes over a faint fill, with a slightly brighter top and bottom edge. */
+	/** A one-pixel checker of dark grey and a faint light grey, like AppleSkin's exhaustion texture. */
 	private static DynamicTexture makeHatch(int w, int h) {
 		DynamicTexture tex = new DynamicTexture(w, h);
 		int[] data = tex.getTextureData();
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				boolean stripe = ((x + y) & 3) < 2;
-				boolean edge = y == 0 || y == h - 1;
-				int a = edge ? 0x90 : (stripe ? 0xA0 : 0x28);
-				data[y * w + x] = (a << 24) | 0xE0E0E0;
+				boolean dark = ((x + y) & 1) == 0;
+				data[y * w + x] = dark ? 0xC0303030 : 0x50D0D0D0;
 			}
 		}
 		tex.updateDynamicTexture();
