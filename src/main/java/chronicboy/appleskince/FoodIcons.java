@@ -169,14 +169,14 @@ public final class FoodIcons {
 		GL11.glColor4f(1F, 1F, 1F, 1F);
 	}
 
-	/** A one-pixel checker of dark grey and a faint light grey, like AppleSkin's exhaustion texture. */
+	/** A one-pixel checker of dark grey and clear pixels, like AppleSkin's exhaustion texture. */
 	private static DynamicTexture makeHatch(int w, int h) {
 		DynamicTexture tex = new DynamicTexture(w, h);
 		int[] data = tex.getTextureData();
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				boolean dark = ((x + y) & 1) == 0;
-				data[y * w + x] = dark ? 0xC0303030 : 0x50D0D0D0;
+				data[y * w + x] = dark ? 0xC0303030 : 0x00000000;
 			}
 		}
 		tex.updateDynamicTexture();
