@@ -1,0 +1,9 @@
+accessWidener	v1	named
+
+# Food values that are private in vanilla/BTW
+accessible	field	net/minecraft/src/ItemFood	alwaysEdible	Z
+accessible	field	btw/item/items/BucketItemDrinkable	hungerHealed	I
+accessible	field	btw/item/items/BucketItemDrinkable	saturationModifier	F
+
+# Exhaustion (singleplayer: read from the integrated server player)
+accessible	field	net/minecraft/src/FoodStats	foodExhaustionLevel	F

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "appleskin-ce",
+  "version": "${version}",
+  "name": "AppleSkin CE",
+  "description": "Shows food hunger and fat values in tooltips, previews what food will restore on the hunger bar, and shows exhaustion, for Better Than Wolves CE 3.0.0 and above",
+  "authors": [
+    "chronicboy31"
+  ],
+  "license": "CC0-1.0",
+  "icon": "assets/appleskin-ce/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "chronicboy.appleskince.AppleSkinMod"
+    ],
+    "btw:addon": [
+      "chronicboy.appleskince.AppleSkinAddon"
+    ]
+  },
+  "custom": {
+    "btw:addon_prefix": "ASK"
+  },
+  "accessWidener": "appleskin-ce.accesswidener",
+  "mixins": [
+    "appleskin-ce.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.19",
+    "minecraft": "1.6.4"
+  }
+}
