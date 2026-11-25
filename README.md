@@ -7,23 +7,24 @@ BTW's hunger system is one of the hardest parts of the mod, and the game never t
 ## Features
 
 ### Food tooltips
-Every food and drinkable bucket shows:
-- **Hunger**: how many shanks it restores.
-- **Overflow to fat**: in BTW, food only turns into fat when it overflows a full hunger bar. This is how much of that overflow becomes fat. For example, 60% means each overflowing shank gives 0.6 of a fat icon.
-- **Now**: exactly what eating it right now would do, given your current hunger and fat. It also tells you when you're too full, or when the Hunger effect stops you eating.
+Every food and drinkable bucket shows two rows of icons in its tooltip, in the inventory and in EMI:
+- **Shanks**: how much hunger it restores.
+- **Fat**: how much fat it gives if all of it overflows a full hunger bar. In BTW, food only turns into fat when your hunger bar is already full.
+
+Turn on `showTooltipNumbers` for exact numbers, plus a line saying what eating it right now would do.
 
 ### Hunger bar preview
 Hold a food and the shanks and fat it would add flash on your hunger bar, so you can see whether you'd waste it.
 
-### Exhaustion line
-A thin line under the hunger bar fills up as you get closer to losing the next bit of hunger, or fat when you're burning fat (yellow). Exhaustion is never sent to the client, so this works in singleplayer only.
+### Exhaustion
+Diagonal hatching spreads across the hunger bar from the right as you get closer to losing the next bit of hunger (or fat, when you're burning fat). Exhaustion is never sent to the client, so this works in singleplayer only.
 
 ## Settings
 Each feature can be turned off in `config/appleskin-ce.properties`:
 
 ```
 showTooltips=true
-showTooltipNowLine=true
+showTooltipNumbers=false
 showHudPreview=true
 showExhaustion=true
 ```

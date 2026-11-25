@@ -1,6 +1,7 @@
 package chronicboy.appleskince.mixin;
 
 import chronicboy.appleskince.AppleSkinConfig;
+import chronicboy.appleskince.FoodIcons;
 import chronicboy.appleskince.FoodInfo;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.FoodStats;
@@ -38,14 +39,17 @@ public class GuiIngameMixin {
 		try {
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			// Hatching over the bar, growing from the right as exhaustion builds (singleplayer only).
+			if (AppleSkinConfig.showExhaustion) {
+				float progress = appleskin$exhaustionProgress();
+				if (progress > 0F) FoodIcons.drawExhaustionHatch(screenX, screenY, progress);
+			}
 			if (AppleSkinConfig.showHudPreview) appleskin$drawPreview(screenX, screenY);
-			if (AppleSkinConfig.showExhaustion) appleskin$drawExhaustion(screenX, screenY);
 			appleskin$failures = 0;
 		} catch (Throwable t) {
 			appleskin$failures++;
 		} finally {
 			GL11.glColor4f(1F, 1F, 1F, 1F);
-			// Gui.drawRect switches blending off, so put back exactly what BTW had.
 			if (blend) GL11.glEnable(GL11.GL_BLEND);
 			else GL11.glDisable(GL11.GL_BLEND);
 			mc.getTextureManager().bindTexture(Gui.icons);
@@ -128,32 +132,21 @@ public class GuiIngameMixin {
 	}
 
 	/**
-	 * A 1px line under the hunger bar showing progress to the next hunger or fat loss.
-	 * Exhaustion is never sent to the client, so this reads the integrated server's copy and only works in singleplayer.
+	 * Progress (0..1) to the next hunger or fat loss. Exhaustion is never sent to the client, so this reads the
+	 * integrated server's copy: singleplayer only, -1 elsewhere.
 	 */
 	@Unique
-	private void appleskin$drawExhaustion(int screenX, int screenY) {
+	private float appleskin$exhaustionProgress() {
 		IntegratedServer server = mc.getIntegratedServer();
-		if (server == null || server.getConfigurationManager() == null) return;
+		if (server == null || server.getConfigurationManager() == null) return -1F;
 		EntityPlayerMP serverPlayer = server.getConfigurationManager().getPlayerEntity(mc.thePlayer.username);
-		if (serverPlayer == null) return;
+		if (serverPlayer == null) return -1F;
 		FoodStats stats = serverPlayer.getFoodStats();
-
-		// FoodStats.onUpdate burns fat (0.5 per step) while fat sits above the last hunger shank, else hunger (1.33 per step).
+		// FoodStats.onUpdate burns fat (0.5 per step) while fat sits above the last hunger shank, else hunger (1.33).
 		int food = stats.getFoodLevel();
 		float fat = stats.getSaturationLevel();
 		boolean burningFat = fat > (float) ((food + 5) / 6) * 2F;
 		float step = burningFat ? 0.5F : 1.33F;
-		float progress = Math.max(0F, Math.min(1F, stats.foodExhaustionLevel / step));
-
-		int right = screenX - 1;
-		int left = screenX - 80;
-		int y = screenY + 10;
-		Gui.drawRect(left, y, right, y + 1, 0x40000000);
-		int width = Math.round((right - left) * progress);
-		if (width > 0) {
-			int color = burningFat ? 0xC0F0C850 : 0xC0E07040;
-			Gui.drawRect(right - width, y, right, y + 1, color);
-		}
+		return Math.max(0F, Math.min(1F, stats.foodExhaustionLevel / step));
 	}
 }

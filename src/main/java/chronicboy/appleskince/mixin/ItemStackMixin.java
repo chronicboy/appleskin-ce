@@ -1,9 +1,11 @@
 package chronicboy.appleskince.mixin;
 
 import chronicboy.appleskince.AppleSkinConfig;
+import chronicboy.appleskince.FoodIcons;
 import chronicboy.appleskince.FoodInfo;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.Minecraft;
 import net.minecraft.src.Potion;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,34 +14,51 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
+/**
+ * Adds the food rows to an item's tooltip. Icon rows are reserved as lines of spaces carrying a marker;
+ * GuiContainerMixin and EmiTooltipMixin paint the shanks into them.
+ */
 @Mixin(ItemStack.class)
 public class ItemStackMixin {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Inject(method = "getTooltip", at = @At("RETURN"))
 	private void appleskin$addFoodLines(EntityPlayer player, boolean advanced, CallbackInfoReturnable<List> cir) {
-		if (!AppleSkinConfig.showTooltips) return;
+		if (!AppleSkinConfig.showTooltips && !AppleSkinConfig.showTooltipNumbers) return;
 		List lines = cir.getReturnValue();
 		if (lines == null) return;
 		try {
 			FoodInfo info = FoodInfo.of((ItemStack) (Object) this);
 			if (info == null) return;
 
-			lines.add("§7Hunger: §6" + FoodInfo.format(info.hunger / (float) FoodInfo.UNITS_PER_SHANK));
-			if (info.fatMultiplier > 0F) {
-				lines.add("§7Overflow to fat: §e" + Math.round(info.fatMultiplier * 100F) + "%");
-			} else {
-				lines.add("§7Overflow to fat: §8none");
+			if (AppleSkinConfig.showTooltips) {
+				lines.add(appleskin$placeholder(FoodIcons.MARK_HUNGER, FoodIcons.hungerIcons(info)));
+				if (FoodIcons.fatIcons(info) > 0) {
+					lines.add(appleskin$placeholder(FoodIcons.MARK_FAT, FoodIcons.fatIcons(info)));
+				}
 			}
 
-			if (AppleSkinConfig.showTooltipNowLine && player != null && !player.capabilities.isCreativeMode) {
-				lines.add(nowLine(info, player));
+			if (AppleSkinConfig.showTooltipNumbers) {
+				lines.add("§7Hunger: §6" + FoodInfo.format(info.hunger / (float) FoodInfo.UNITS_PER_SHANK)
+						+ " §7Fat from overflow: §e" + Math.round(info.fatMultiplier * 100F) + "%");
+				if (player != null && !player.capabilities.isCreativeMode) {
+					lines.add(appleskin$nowLine(info, player));
+				}
 			}
 		} catch (Throwable t) {
 			// Never break a tooltip over our extra lines.
 		}
 	}
 
-	private static String nowLine(FoodInfo info, EntityPlayer player) {
+	/** A line of spaces at least as wide as the icon row. */
+	private static String appleskin$placeholder(String marker, int icons) {
+		int width = FoodIcons.rowWidth(icons);
+		int space = Math.max(1, Minecraft.getMinecraft().fontRenderer.getStringWidth(" "));
+		StringBuilder sb = new StringBuilder(marker);
+		for (int w = 0; w < width; w += space) sb.append(' ');
+		return sb.toString();
+	}
+
+	private static String appleskin$nowLine(FoodInfo info, EntityPlayer player) {
 		if (player.isPotionActive(Potion.hunger)) {
 			return "§cCan't " + (info.isDrink ? "drink" : "eat") + " with the Hunger effect";
 		}
@@ -60,7 +79,6 @@ public class ItemStackMixin {
 		if (fatIcons > 0.001F) {
 			if (any) sb.append("§7, ");
 			String fat = FoodInfo.format(fatIcons);
-			// Tiny gains round to 0; still say something was gained.
 			sb.append("§e+").append("0".equals(fat) ? "<0.1" : fat).append(" fat");
 		}
 		return sb.toString();

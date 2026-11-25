@@ -12,13 +12,13 @@ import java.util.Properties;
 public final class AppleSkinConfig {
 	private static final File FILE = new File("config/appleskin-ce.properties");
 
-	/** Hunger and fat values in food tooltips. */
+	/** Shank and fat icon rows in food tooltips, like AppleSkin. */
 	public static boolean showTooltips = true;
-	/** The "Now:" tooltip line: what eating it right now would do. */
-	public static boolean showTooltipNowLine = true;
+	/** Extra text lines: exact numbers and what eating it right now would do. */
+	public static boolean showTooltipNumbers = false;
 	/** Flash the shanks and fat that held food would add. */
 	public static boolean showHudPreview = true;
-	/** Thin exhaustion line under the hunger bar (singleplayer only). */
+	/** Hatched exhaustion bar behind the hunger bar (singleplayer only). */
 	public static boolean showExhaustion = true;
 
 	private AppleSkinConfig() {
@@ -34,7 +34,7 @@ public final class AppleSkinConfig {
 			}
 		}
 		showTooltips = read(p, "showTooltips", showTooltips);
-		showTooltipNowLine = read(p, "showTooltipNowLine", showTooltipNowLine);
+		showTooltipNumbers = read(p, "showTooltipNumbers", showTooltipNumbers);
 		showHudPreview = read(p, "showHudPreview", showHudPreview);
 		showExhaustion = read(p, "showExhaustion", showExhaustion);
 		save();
@@ -48,7 +48,7 @@ public final class AppleSkinConfig {
 	public static void save() {
 		Properties p = new Properties();
 		p.setProperty("showTooltips", Boolean.toString(showTooltips));
-		p.setProperty("showTooltipNowLine", Boolean.toString(showTooltipNowLine));
+		p.setProperty("showTooltipNumbers", Boolean.toString(showTooltipNumbers));
 		p.setProperty("showHudPreview", Boolean.toString(showHudPreview));
 		p.setProperty("showExhaustion", Boolean.toString(showExhaustion));
 		File dir = FILE.getParentFile();
